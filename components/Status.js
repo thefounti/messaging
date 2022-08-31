@@ -1,4 +1,4 @@
-import Constants  from 'expo-constants';
+import Constants from 'expo-constants';
 import { StyleSheet, NetInfo, Platform, StatusBar, Text, View } from 'react-native';
 import { useState } from 'react';
 
@@ -14,15 +14,23 @@ const styles = StyleSheet.create({
 
 export default Status = () => {
 
-    const [state, setState] = useState({ info: 'none' })
+    const [state, setState] = useState({ info: null })
     const isConnected = state.info !== 'none';
     const backgroundColor = isConnected ? 'white' : 'red';
 
+    const statusBar = (
+        <StatusBar
+            backgroundColor={backgroundColor}
+            barStyle={isConnected ? 'dark-content' : 'light-content'}
+            animated={false}
+        />
+    )
+
     if (Platform.OS === 'ios') {
         return (
-            <View style={[styles.status, { backgroundColor }]}></View>
+            <View style={[styles.status, { backgroundColor }]}>{statusBar}</View>
         )
     }
     ///TEMPORAL
-    return (<></>);
+    return (null);
 }
