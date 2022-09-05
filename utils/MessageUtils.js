@@ -15,6 +15,7 @@ let messageId=0;
 
 const getNextId = () => {
     messageId+=1;
+    return messageId;
 }
 
 export const createTextMessage = (text) => {

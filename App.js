@@ -1,11 +1,35 @@
-import { View, Text,StyleSheet } from "react-native";
+import { View, Text, StyleSheet } from "react-native";
 import Status from "./components/Status";
+import MessageList from "./components/MessageList";
+import { createImageMessage, createLocationMessage, createTextMessage } from './utils/MessageUtils';
+import { useState } from "react";
 
 export default function App() {
 
+  const [state, setState] = useState({
+    messages: [
+      createImageMessage('https://unsplash.it/300/300'),
+      createTextMessage('World'),
+      createTextMessage('Hello'),
+      createLocationMessage({
+        latitude: 37.78825,
+        longitude: -122.4324
+      }),
+    ],
+  });
+
+  const handlePressMessage = () => {
+
+  }
+
   const renderMessageList = () => {
+
+    const { messages } = state;
+
     return (
-      <View style={styles.content}></View>
+      <View style={styles.content}>
+        <MessageList messages={messages} onPressMessage={handlePressMessage} />
+      </View>
     )
   }
 
@@ -20,7 +44,7 @@ export default function App() {
       <View style={styles.toolbar}></View>
     )
   }
-
+console.log('messages',state.messages);
   return (
     <View style={styles.container} >
       <Status />
