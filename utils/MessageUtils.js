@@ -33,11 +33,11 @@ export const createImageMessage = (uri) => {
     }
 }
 
-export const createImageMessage = (uri) => {
+export const createLocationMessage = (coordinate) => {
     return {
-        type:'image',
+        type:'location',
         id:getNextId(),
-        uri,
+        coordinate,
     }
 }
 
