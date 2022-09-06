@@ -20,18 +20,17 @@ export default Status = () => {
     // }
 
     function handleChange(info) {
-        console.log("info omg", info);
+        //console.log("info omg", info);
         setState({ ...state, info: info.type })
     }
 
     ///Contienes el mount, unmount, change...
     useEffect(() => {
-        NetInfo.addEventListener(handleChange)
+        const unsuscribe = NetInfo.addEventListener(handleChange)
 
         const fetchConnInfo = async () => {
             await NetInfo.fetch()
                 .then((info) => {
-                    console.log("info.type", info.type);
                     setState({ ...state, info: info.type })
                 })
                 .catch((err) => { console.log('Error: ' + err); })
@@ -39,13 +38,15 @@ export default Status = () => {
 
         fetchConnInfo();
         ///Esto equivaldria al unmount
-        
+
         ///PRUEBA DEL CAMBIO DE ESTADO DE RED
         // setTimeout(() => {
         //     handleChange({type:'none'});
         // }, 3000);
         return () => {
-            NetInfo.removeEventListener();
+            ///VEIJAS VERSIONES
+            // NetInfo.removeEventListener(handleChange);
+            unsuscribe();
         }
     }, [])
 

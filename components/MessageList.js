@@ -37,7 +37,7 @@ export default MessageList = ({ messages, onPressMessage }) => {
         }
     }
 
-    const renderMessageItem = (item) => {
+    const renderMessageItem = ({item}) => {
         return (
             <View key={item.id} style={styles.messageRow}>
                 <TouchableOpacity onPress={() => { onPressMessage(item) }}>
