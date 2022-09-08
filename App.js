@@ -1,8 +1,11 @@
-import { View, Text, StyleSheet, Alert, Image, TouchableHighlight, BackHandler } from "react-native";
+import { View, Text, StyleSheet, Alert, Image, TouchableHighlight, BackHandler, } from "react-native";
 import Status from "./components/Status";
 import MessageList from "./components/MessageList";
 import { createImageMessage, createLocationMessage, createTextMessage } from './utils/MessageUtils';
 import { useEffect, useState } from "react";
+import Toolbar from "./components/Toolbar";
+// import Geolocation from "@react-native-community/geolocation";
+import *  as Location from 'expo-location';
 
 export default function App() {
 
@@ -16,11 +19,13 @@ export default function App() {
         longitude: -122.4324
       }),
     ],
-    fullscreenImageId: null
+    fullscreenImageId: null,
+    isInputFocused: false,
+    loading:false
   });
 
   useEffect(() => {
-    const unsuscribe = BackHandler.addEventListener('hardwareBackPress',() => {
+    const unsuscribe = BackHandler.addEventListener('hardwareBackPress', () => {
       const { fullscreenImageId } = state;
 
       if (fullscreenImageId) {
@@ -88,7 +93,15 @@ export default function App() {
 
   const renderToolbar = () => {
     return (
-      <View style={styles.toolbar}></View>
+      <View style={styles.toolbar}>
+        <Toolbar
+          isFocused={state.isInputFocused}
+          onSubmit={handleSubmit}
+          onChangeFocus={handleChangeFocus}
+          onPressCamera={hanldePressToolbarCamera}
+          onPressLocation={handlePressToolbarLocation}
+        />
+      </View>
     )
   }
 
@@ -110,9 +123,76 @@ export default function App() {
     )
   }
 
+  const hanldePressToolbarCamera = () => {
+
+  }
+
+  const handlePressToolbarLocation = async () => {
+
+    let { status } = await Location.requestForegroundPermissionsAsync();
+    if (status !== 'granted') {
+      // setErrorMsg('Permission to access location was denied');
+      console.log('Permission to access location was denied');
+      return;
+    }
+
+    setState({
+      ...state,
+      loading:true
+    })
+    let location = await Location.getCurrentPositionAsync({});
+    const { coords: { latitude, longitude } } = location;
+    setState({
+      ...state,
+      messages: [
+        createLocationMessage({
+          latitude,
+          longitude
+        }),
+        ...state.messages
+      ],
+      loading:false
+    })
+    console.log("location", location);
+    // setLocation(location);
+
+    // #region ESTO ES COMO SE ACERCARIA MÁS A LO QUE VIENE SIENDO EL LIBRO, AL FINAL USO EXPO-LOCATION
+    // Geolocation.setRNConfiguration({
+    //   skipPermissionRequests:true,
+    //   authorizationLevel:'whenInUse'
+    // })
+    // Geolocation.getCurrentPosition(
+    //   (position) => {
+    //   const {coords: {latitude,longitude}}=position;
+
+    //   setState({
+    //     ...state,
+    //     messages:[
+    //       createLocationMessage({
+    //         latitude,
+    //         longitude
+    //       }),
+    //       ...state.messages
+    //     ]
+    //   })
+    // },
+    // (err) => {
+    //   console.log("Error geoloc",err);
+    // })
+    // #endregion
+  }
+
+  const handleChangeFocus = (isFocused) => {
+    setState({ ...state, isInputFocused: isFocused })
+  }
+
+  const handleSubmit = (text) => {
+    setState({ ...state, messages: [createTextMessage(text), ...state.messages] })
+  }
+
   return (
     <View style={styles.container} >
-      <Status />
+      <Status loading={state.loading} />
       {renderMessageList()}
       {renderToolbar()}
       {renderInputMethodEditor()}

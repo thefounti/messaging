@@ -7,7 +7,7 @@ import { useEffect, useState } from 'react';
 const statusHeight = (Platform.OS === 'ios' ? Constants.statusBarHeight : 0);
 
 
-export default Status = () => {
+export default Status = ({ loading }) => {
 
     ///VOY A SEGUIR EL EJEMPLO DEL LIBRO EN EL QUE USA EL GETNCONNECTIONINFO, DEPRECATED, QUE TE PASA EL TIPO CONEXION QUE TIENES. EN EL ACTUAL HAY UN TYPE QUE 
     ///CREO QUE CONTIENE LOS MISMOS VALORES QUE EL ANTIGUO Y UN "isConnected" TRUE/FALSE.
@@ -58,12 +58,14 @@ export default Status = () => {
         />
     )
     //console.log("isConnected",isConnected);
+    let objBackLoading = {}
+    if (loading) objBackLoading = { backgroundColor: 'lightgrey' };
     const MessageContainer = () => (
         <View style={styles.messageContainer} pointerEvents={'none'}>
             {statusBar}
-            {!isConnected && (
-                <View style={styles.bubble}>
-                    <Text style={styles.text}>No network connection</Text>
+            {!isConnected || loading && (
+                <View style={[styles.bubble, objBackLoading]}>
+                    <Text style={styles.text}>{!isConnected ? 'No network connection' : 'Loading...'}</Text>
                 </View>
             )}
         </View>
