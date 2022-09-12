@@ -7,6 +7,8 @@ import Toolbar from "./components/Toolbar";
 // import Geolocation from "@react-native-community/geolocation";
 import *  as Location from 'expo-location';
 
+import ImageGrid from "./components/ImageGrid";
+
 export default function App() {
 
   const [state, setState] = useState({
@@ -21,7 +23,7 @@ export default function App() {
     ],
     fullscreenImageId: null,
     isInputFocused: false,
-    loading:false
+    loading: false
   });
 
   useEffect(() => {
@@ -87,7 +89,9 @@ export default function App() {
 
   const renderInputMethodEditor = () => {
     return (
-      <View style={styles.inputMethodEditor}></View>
+      <View style={styles.inputMethodEditor}>
+        <ImageGrid />
+      </View>
     )
   }
 
@@ -138,7 +142,7 @@ export default function App() {
 
     setState({
       ...state,
-      loading:true
+      loading: true
     })
     let location = await Location.getCurrentPositionAsync({});
     const { coords: { latitude, longitude } } = location;
@@ -151,7 +155,7 @@ export default function App() {
         }),
         ...state.messages
       ],
-      loading:false
+      loading: false
     })
     console.log("location", location);
     // setLocation(location);
@@ -189,6 +193,7 @@ export default function App() {
   const handleSubmit = (text) => {
     setState({ ...state, messages: [createTextMessage(text), ...state.messages] })
   }
+
 
   return (
     <View style={styles.container} >

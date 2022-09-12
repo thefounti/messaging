@@ -1,9 +1,8 @@
 
 import PropTypes from 'prop-types';
-import { Dimensions, FlatList, PixelRatio, StyleSheet } from 'react-native';
+import { Dimensions, FlatList, PixelRatio, StyleSheet,Text,View } from 'react-native';
 
 export default Grid = (props) => {
-
     const renderGridItem = (info) => {
         const { index } = info;
         const { renderItem, numColumns, itemMargin } = props;
@@ -24,7 +23,7 @@ export default Grid = (props) => {
     }
 
     return (
-        <FlatList {...props} renderItem={renderGridItem} />
+            <FlatList {...props} renderItem={renderGridItem} />
     )
 
 }
