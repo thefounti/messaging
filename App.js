@@ -87,13 +87,11 @@ export default function App() {
     )
   }
 
-  const renderInputMethodEditor = () => {
-    return (
+  const renderInputMethodEditor = () => (
       <View style={styles.inputMethodEditor}>
         <ImageGrid />
       </View>
     )
-  }
 
   const renderToolbar = () => {
     return (

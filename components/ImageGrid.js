@@ -1,4 +1,4 @@
-import { StyleSheet, CameraRollStatic, TouchableOpacity,Image } from "react-native";
+import { StyleSheet, CameraRollStatic, TouchableOpacity, Image } from "react-native";
 import PropTypes from "prop-types";
 import React, { useState } from "react";
 // import { Permissions } from 'expo';
