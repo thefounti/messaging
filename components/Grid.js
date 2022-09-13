@@ -23,7 +23,7 @@ export default Grid = (props) => {
     }
 
     return (
-        <FlatList {...props} renderItem={renderGridItem} />
+        <FlatList {...props} renderItem={renderGridItem}/>
     )
 
 }
