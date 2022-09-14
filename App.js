@@ -87,47 +87,15 @@ export default function App() {
     )
   }
 
+  const handlePressImage = (uri) => {
+    setState({ ...state, messages: [createImageMessage(uri), ...state.messages] })
+  }
+
   const renderInputMethodEditor = () => (
-      <View style={styles.inputMethodEditor}>
-        <ImageGrid />
-      </View>
-    )
-
-  const renderToolbar = () => {
-    return (
-      <View style={styles.toolbar}>
-        <Toolbar
-          isFocused={state.isInputFocused}
-          onSubmit={handleSubmit}
-          onChangeFocus={handleChangeFocus}
-          onPressCamera={hanldePressToolbarCamera}
-          onPressLocation={handlePressToolbarLocation}
-        />
-      </View>
-    )
-  }
-
-  const renderFullscreenImage = () => {
-    const { messages, fullscreenImageId } = state;
-
-    if (!fullscreenImageId) return null;
-
-    const image = messages.find(message => message.id == fullscreenImageId)
-
-    if (!image) return null;
-
-    const { uri } = image;
-
-    return (
-      <TouchableHighlight style={styles.fullscreenOverlay} onPress={dismissFullscreenImage}>
-        <Image style={styles.fullscreenImage} source={{ uri }} />
-      </TouchableHighlight>
-    )
-  }
-
-  const hanldePressToolbarCamera = () => {
-
-  }
+    <View style={styles.inputMethodEditor}>
+      <ImageGrid onPressImage={handlePressImage}/>
+    </View>
+  )
 
   const handlePressToolbarLocation = async () => {
 
@@ -184,6 +152,10 @@ export default function App() {
     // #endregion
   }
 
+  const hanldePressToolbarCamera = () => {
+
+  }
+
   const handleChangeFocus = (isFocused) => {
     setState({ ...state, isInputFocused: isFocused })
   }
@@ -192,6 +164,37 @@ export default function App() {
     setState({ ...state, messages: [createTextMessage(text), ...state.messages] })
   }
 
+  const renderToolbar = () => {
+    return (
+      <View style={styles.toolbar}>
+        <Toolbar
+          isFocused={state.isInputFocused}
+          onSubmit={handleSubmit}
+          onChangeFocus={handleChangeFocus}
+          onPressCamera={hanldePressToolbarCamera}
+          onPressLocation={handlePressToolbarLocation}
+        />
+      </View>
+    )
+  }
+
+  const renderFullscreenImage = () => {
+    const { messages, fullscreenImageId } = state;
+
+    if (!fullscreenImageId) return null;
+
+    const image = messages.find(message => message.id == fullscreenImageId)
+
+    if (!image) return null;
+
+    const { uri } = image;
+
+    return (
+      <TouchableHighlight style={styles.fullscreenOverlay} onPress={dismissFullscreenImage}>
+        <Image style={styles.fullscreenImage} source={{ uri }} />
+      </TouchableHighlight>
+    )
+  }
 
   return (
     <View style={styles.container} >

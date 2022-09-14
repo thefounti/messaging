@@ -5,15 +5,14 @@ import { getPermissionsAsync, requestPermissionsAsync, getAssetsAsync } from 'ex
 import Grid from "./Grid";
 
 const keyExtractor = ({ uri }) => uri;
-
-export default ImageGrid = ({ }) => {
+let loading = false, cursor = null;
+export default ImageGrid = ({ onPressImage }) => {
     // console.log("MEDIA_LIBRARY",MEDIA_LIBRARY);
     const [state, setState] = useState({
         images: [],
-        loading: false,
-        cursor: null,
+        // loading: false,
+        // cursor: null,
     });
-    // console.log("state",state);
     useEffect(() => {
         getImages();
     }, [])
@@ -28,10 +27,11 @@ export default ImageGrid = ({ }) => {
         if (status !== 'granted') {
             console.log("Camera roll permision denied!!!")
         }
-        
-        if (state.loading) return;
-        // loading = true;
-        setState({ ...state, loading: true })
+
+        // if (state.loading) return;
+        if (loading) return;
+        loading = true;
+        // setState({ ...state, loading: true })
         const results = await getAssetsAsync({
             first: 20,
             after
@@ -41,21 +41,25 @@ export default ImageGrid = ({ }) => {
 
         const { assets, hasNextPage, endCursor } = results;
         const loadedImages = assets.map(item => { return { uri: item.uri } })
-        // loading = false;
-        // cursor = hasNextPage ? endCursor : null;
+        loading = false;
+        cursor = hasNextPage ? endCursor : null;
         setState({
             ...state,
             images: [...state.images.concat(loadedImages)],
-            loading: false,
-            cursor: hasNextPage ? endCursor : null,
+            // loading: false,
+            // cursor: hasNextPage ? endCursor : null,
         })
 
     }
 
     const getNextImages = () => {
-        if (!state.cursor) return;
+        // if (!state.cursor) return;
 
-        getImages(state.cursor);
+        // getImages(state.cursor);
+
+        if (!cursor) return;
+
+        getImages(cursor);
     }
 
     const renderItem = ({ item: { uri }, size, marginTop, marginLeft }) => {
@@ -67,7 +71,14 @@ export default ImageGrid = ({ }) => {
         }
 
         return (
-            <Image source={{ uri }} style={style} />
+            <TouchableOpacity
+            key={uri}
+            activeOpacity={0.75}
+            onPress={() => onPressImage(uri)}
+            style={style}
+            >
+                <Image source={{ uri }} style={styles.image} />
+            </TouchableOpacity>
         )
     }
     return (
