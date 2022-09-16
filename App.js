@@ -8,9 +8,11 @@ import Toolbar from "./components/Toolbar";
 import *  as Location from 'expo-location';
 
 import ImageGrid from "./components/ImageGrid";
+import MeasureLayout from "./components/MeasureLayout";
+import MessagingContainer, { INPUT_METHOD } from "./components/MessagingContainer";
+import KeyboardState from "./components/KeyboardState";
 
 export default function App() {
-
   const [state, setState] = useState({
     messages: [
       createImageMessage('https://unsplash.it/300/300'),
@@ -23,7 +25,8 @@ export default function App() {
     ],
     fullscreenImageId: null,
     isInputFocused: false,
-    loading: false
+    loading: false,
+    inputMethod: INPUT_METHOD.NONE,
   });
 
   useEffect(() => {
@@ -93,7 +96,7 @@ export default function App() {
 
   const renderInputMethodEditor = () => (
     <View style={styles.inputMethodEditor}>
-      <ImageGrid onPressImage={handlePressImage}/>
+      <ImageGrid onPressImage={handlePressImage} />
     </View>
   )
 
@@ -152,8 +155,19 @@ export default function App() {
     // #endregion
   }
 
-  const hanldePressToolbarCamera = () => {
+  const handleChangeInputMethod = (inputMethod) => {
+    setState({
+      ...state,
+      inputMethod
+    })
+  }
 
+  const hanldePressToolbarCamera = () => {
+    setState({
+      ...state,
+      isInputFocused: false,
+      inputMethod: INPUT_METHOD.CUSTOM,
+    })
   }
 
   const handleChangeFocus = (isFocused) => {
@@ -199,9 +213,23 @@ export default function App() {
   return (
     <View style={styles.container} >
       <Status loading={state.loading} />
-      {renderMessageList()}
-      {renderToolbar()}
-      {renderInputMethodEditor()}
+      <MeasureLayout>
+        {layout => (
+          <KeyboardState layout={layout}>
+            {keyboardInfo => (
+              <MessagingContainer
+                {...keyboardInfo}
+                inputMethod={state.inputMethod}
+                onChangeInputMethod={handleChangeInputMethod}
+                renderInputMethodEditor={renderInputMethodEditor}
+              >
+                {renderMessageList()}
+                {renderToolbar()}
+              </MessagingContainer>
+            )}
+          </KeyboardState>
+        )}
+      </MeasureLayout>
       {renderFullscreenImage()}
     </View>
   );

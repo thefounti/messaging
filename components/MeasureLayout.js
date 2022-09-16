@@ -4,15 +4,10 @@ import React, { useState } from 'react';
 import { Platform, StyleSheet, View } from 'react-native';
 import Constants from 'expo-constants';
 
-MeasureLayout.propTypes = {
-    children: PropTypes.func.isRequired,
-}
-
 export default MeasureLayout = ({ children }) => {
     const [state, setState] = useState({
         layout: null,
     })
-
     const handleLayout = (event) => {
         const { nativeEvent: { layout } } = event;
 
@@ -25,12 +20,21 @@ export default MeasureLayout = ({ children }) => {
         });
     };
 
-    return (
-        <>
-            {!state.layout && <View onLayout={handleLayout} style={styles.container}></View>}
-            {children(layout)}
-        </>
-    )
+    if (!state.layout)
+        return (<View onLayout={handleLayout} style={styles.container}></View>);
+
+    return children(state.layout);
+
+    // return (
+    //     <View>
+    //         {!state.layout && <View onLayout={handleLayout} style={styles.container}></View>}
+    //         {children(layout)}
+    //     </View>
+    // )
+}
+
+MeasureLayout.propTypes = {
+    children: PropTypes.func.isRequired,
 }
 
 const styles = StyleSheet.create({

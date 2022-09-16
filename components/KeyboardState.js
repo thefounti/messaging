@@ -3,21 +3,11 @@ import React, { useEffect, useState } from "react";
 import PropTypes from 'prop-types';
 import { Keyboard, Platform } from "react-native";
 
-KeyboardState.propTypes = {
-    layout: PropTypes.shape({
-        x: PropTypes.number.isRequired,
-        y: PropTypes.number.isRequired,
-        width: PropTypes.number.isRequired,
-        height: PropTypes.number.isRequired,
-    }).isRequired,
-    children: PropTypes.func.isRequired,
-}
-
 const INITIAL_ANIMATION_DURATION = 250;
 
 export default KeyboardState = (props) => {
-
-    const { layout: { height }, children } = props;
+    const { layout, children } = props;
+    const { height } = layout;
 
     const [state, setState] = useState({
         contentHeight: height,
@@ -48,21 +38,25 @@ export default KeyboardState = (props) => {
     }, [])
 
     const keyboardWillShow = (event) => {
+        console.log("keyBoardWillShow");
         setState({ ...state, keyboardWillShow: true });
         measure(event);
     }
 
     const keyboardWillHide = (event) => {
+        console.log("keyBoardWillHide");
         setState({ ...state, keyboardWillHide: true });
         measure(event);
     }
 
     const keyboardDidShow = (event) => {
+        console.log("keyBoardDidShow");
         setState({ ...state, keyboardWillShow: false, keyboardVisible: true });
         measure(event);
     }
 
     const keyboardDidHide = (event) => {
+        console.log("keyBoardDidHide");
         setState({ ...state, keyboardWillHide: false, keyboardVisible: false });
     }
 
@@ -77,18 +71,38 @@ export default KeyboardState = (props) => {
         })
     }
 
-    return(
-        <>
-        {children({
-            containerHeight:layout.height,
-            contentHeight:state.contentHeight,
-            keyboardHeight:state.keyboardHeight,
-            keyboardVisible:state.keyboardVisible,
-            keyboardWillShow:state.keyboardWillShow,
-            keyboardWillHide:state.keyboardDidHide,
-            keyboardAnimationDuration:state.keyboardAnimationDuration,
-        })}
-        </>
-    )
+    return children({
+        containerHeight: layout.height,
+        contentHeight: state.contentHeight,
+        keyboardHeight: state.keyboardHeight,
+        keyboardVisible: state.keyboardVisible,
+        keyboardWillShow: state.keyboardWillShow,
+        keyboardWillHide: state.keyboardWillHide,
+        keyboardAnimationDuration: state.keyboardAnimationDuration,
+    });
 
+    // return(
+    //     <>
+    //     {children({
+    //         containerHeight:layout.height,
+    //         contentHeight:state.contentHeight,
+    //         keyboardHeight:state.keyboardHeight,
+    //         keyboardVisible:state.keyboardVisible,
+    //         keyboardWillShow:state.keyboardWillShow,
+    //         keyboardWillHide:state.keyboardDidHide,
+    //         keyboardAnimationDuration:state.keyboardAnimationDuration,
+    //     })}
+    //     </>
+    // )
+
+}
+
+KeyboardState.propTypes = {
+    layout: PropTypes.shape({
+        x: PropTypes.number.isRequired,
+        y: PropTypes.number.isRequired,
+        width: PropTypes.number.isRequired,
+        height: PropTypes.number.isRequired,
+    }).isRequired,
+    children: PropTypes.func.isRequired,
 }
