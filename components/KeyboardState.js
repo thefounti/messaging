@@ -3,22 +3,25 @@ import React, { useEffect, useState } from "react";
 import PropTypes from 'prop-types';
 import { Keyboard, Platform } from "react-native";
 
+import { INPUT_METHOD } from "./MessagingContainer";
+
 const INITIAL_ANIMATION_DURATION = 250;
 
+
+
 export default KeyboardState = (props) => {
-    const { layout, children } = props;
+    const { layout, children, inputMethod } = props;
     const { height } = layout;
 
     const [state, setState] = useState({
         contentHeight: height,
         keyboardHeight: 0,
-        keyboardVisible: false,
+        keyboardVisible: inputMethod !== INPUT_METHOD.KEYBOARD ? false : true,
         keyboardWillShow: false,
         keyboardWillHide: false,
         keyboardHeight: 0,
         keyboardAnimationDuration: INITIAL_ANIMATION_DURATION,
     })
-
     useEffect(() => {
         // let unsuscribeKeyboardWillShow, unsuscribeKeyboardWillHide, unsuscribeKeyboardDidShow, unsuscribeKeyboardDidHide;
         const subscriptions = [];
@@ -39,20 +42,20 @@ export default KeyboardState = (props) => {
 
     const keyboardWillShow = (event) => {
         console.log("keyBoardWillShow");
-        setState({ ...state, keyboardWillShow: true });
-        measure(event);
+        // setState({ ...state, keyboardWillShow: true });
+        measure(event, "WillShow");
     }
 
     const keyboardWillHide = (event) => {
         console.log("keyBoardWillHide");
-        setState({ ...state, keyboardWillHide: true });
-        measure(event);
+        // setState({ ...state, keyboardWillHide: true });
+        measure(event, "WillHide");
     }
 
     const keyboardDidShow = (event) => {
         console.log("keyBoardDidShow");
-        setState({ ...state, keyboardWillShow: false, keyboardVisible: true });
-        measure(event);
+        // setState({ ...state, keyboardWillShow: false, keyboardVisible: true });
+        measure(event, "DidShow");
     }
 
     const keyboardDidHide = (event) => {
@@ -60,7 +63,7 @@ export default KeyboardState = (props) => {
         setState({ ...state, keyboardWillHide: false, keyboardVisible: false });
     }
 
-    const measure = (event) => {
+    const measure = (event, strEve) => {
         const { endCoordinates: { height, screenY }, duration = INITIAL_ANIMATION_DURATION } = event;
 
         setState({
@@ -68,32 +71,35 @@ export default KeyboardState = (props) => {
             contentHeight: screenY - layout.y,
             keyboardHeight: height,
             keyboardAnimationDuration: duration,
+            keyboardWillHide: strEve === "WillHide" ? true : state.keyboardWillHide,
+            keyboardWillShow: strEve === "DidShow" ? false : (strEve === "WillShow" ? true : state.keyboardWillShow),
+            keyboardVisible: strEve === "DidShow" ? true : state.keyboardVisible,
         })
     }
 
-    return children({
-        containerHeight: layout.height,
-        contentHeight: state.contentHeight,
-        keyboardHeight: state.keyboardHeight,
-        keyboardVisible: state.keyboardVisible,
-        keyboardWillShow: state.keyboardWillShow,
-        keyboardWillHide: state.keyboardWillHide,
-        keyboardAnimationDuration: state.keyboardAnimationDuration,
-    });
+    // return children({
+    //     containerHeight: layout.height,
+    //     contentHeight: state.contentHeight,
+    //     keyboardHeight: state.keyboardHeight,
+    //     keyboardVisible: state.keyboardVisible,
+    //     keyboardWillShow: state.keyboardWillShow,
+    //     keyboardWillHide: state.keyboardWillHide,
+    //     keyboardAnimationDuration: state.keyboardAnimationDuration,
+    // });
 
-    // return(
-    //     <>
-    //     {children({
-    //         containerHeight:layout.height,
-    //         contentHeight:state.contentHeight,
-    //         keyboardHeight:state.keyboardHeight,
-    //         keyboardVisible:state.keyboardVisible,
-    //         keyboardWillShow:state.keyboardWillShow,
-    //         keyboardWillHide:state.keyboardDidHide,
-    //         keyboardAnimationDuration:state.keyboardAnimationDuration,
-    //     })}
-    //     </>
-    // )
+    return (
+        <>
+            {children({
+                containerHeight: layout.height,
+                contentHeight: state.contentHeight,
+                keyboardHeight: state.keyboardHeight,
+                keyboardVisible: state.keyboardVisible,
+                keyboardWillShow: state.keyboardWillShow,
+                keyboardWillHide: state.keyboardWillHide,
+                keyboardAnimationDuration: state.keyboardAnimationDuration,
+            })}
+        </>
+    )
 
 }
 
@@ -105,4 +111,5 @@ KeyboardState.propTypes = {
         height: PropTypes.number.isRequired,
     }).isRequired,
     children: PropTypes.func.isRequired,
+    inputMethod: PropTypes.oneOf(Object.values(INPUT_METHOD)).isRequired,
 }

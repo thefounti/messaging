@@ -163,6 +163,7 @@ export default function App() {
   }
 
   const hanldePressToolbarCamera = () => {
+    console.log("EEEEEEEEEEEEEEE jeroti");
     setState({
       ...state,
       isInputFocused: false,
@@ -209,13 +210,12 @@ export default function App() {
       </TouchableHighlight>
     )
   }
-
   return (
     <View style={styles.container} >
       <Status loading={state.loading} />
       <MeasureLayout>
         {layout => (
-          <KeyboardState layout={layout}>
+          <KeyboardState layout={layout} inputMethod={state.inputMethod} key={"11111"}>
             {keyboardInfo => (
               <MessagingContainer
                 {...keyboardInfo}
