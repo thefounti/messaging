@@ -28,6 +28,7 @@ export default function App() {
     loading: false,
     inputMethod: INPUT_METHOD.NONE,
   });
+  console.log("state.isInputFocused", state.isInputFocused);
 
   useEffect(() => {
     const unsuscribe = BackHandler.addEventListener('hardwareBackPress', () => {
